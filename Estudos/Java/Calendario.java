@@ -25,7 +25,7 @@ public class Calendario extends JFrame {
         setTitle("Calendário Acadêmico");
         setSize(1000, 600); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
 
         // ComboBox para selecionar o ano
         anoComboBox = new JComboBox<>();
@@ -35,7 +35,7 @@ public class Calendario extends JFrame {
         utiliza a classe LocalDate do pacote java.time para obter a data atual(LocalDate.now())
         em seguida extrai o ano da data atual (getYear()) e armazena na variável currentYear
         */
-        int currentYear = LocalDate.now().getYear(); // Obtém o ano atual
+        int currentYear = LocalDate.now().getYear();
 
         // Adiciona os anos de 5 anos antes até 5 anos depois do ano atual
         for (int i = currentYear - 5; i <= currentYear + 5; i++) {
@@ -56,7 +56,7 @@ public class Calendario extends JFrame {
         /*
          Subtraindo 1, já que getMonthValue() retorna um valor de 1 a 12 (janeiro a dezembro) e o índice do ComboBox começa em 0
         */
-        mesComboBox.setSelectedIndex(LocalDate.now().getMonthValue() - 1);
+        mesComboBox.setSelectedIndex(LocalDate.now().getMonthValue() - 1); // Define o mês atual como selecionado
         mesComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +121,6 @@ public class Calendario extends JFrame {
         1. Cria um botão para cada dia do mês
         2. Verifica se existem tarefas para a data
         3. Se existirem tarefas, define a cor de fundo do botão como amarelo
-        4. Adiciona um ActionListener para o botão
         */
         for (int dia = 1; dia <= diasNoMes; dia++) { 
             LocalDate data = LocalDate.of(ano, mes, dia); 
@@ -129,14 +128,13 @@ public class Calendario extends JFrame {
             if (tarefasMap.containsKey(data)) {
                 diaButton.setBackground(Color.YELLOW);
             }
+            // Adiciona um ActionListener para o botão
             diaButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-
                     /*
-                    1. Verificar se existem tarefas para data 
-                    2. Se o usuário clicar em "Sim" --> solicita a tarefa --> se o usuário informar uma tarefa --> adiciona à lista de tarefas da data
-                    3. Atualiza o painel de tarefas 
+                    1. Se o usuário clicar em "Sim" --> solicita a tarefa --> se o usuário informar uma tarefa --> adiciona à lista de tarefas da data
+                    2. Atualiza o painel de tarefas 
                     */
                     if (tarefasMap.containsKey(data)) { 
                         int result = JOptionPane.showConfirmDialog(Calendario.this, "Já existe tarefa(s) para esta data. Deseja adicionar uma nova tarefa?"); // Exibe uma caixa de diálogo de confirmação
@@ -175,11 +173,18 @@ public class Calendario extends JFrame {
         int ano = (int) anoComboBox.getSelectedItem(); // Obtém o ano selecionado
         int mes = mesComboBox.getSelectedIndex() + 1; // Obtém o mês selecionado
 
-        Map<LocalDate, List<String>> tarefasFiltradas = new TreeMap<>(); // Cria um TreeMap para armazenar as tarefas filtradas
-        for (Map.Entry<LocalDate, List<String>> entry : tarefasMap.entrySet()) { // Itera sobre o mapa de tarefas
-            LocalDate data = entry.getKey(); // Obtém a data da tarefa
-            if (data.getYear() == ano && data.getMonthValue() == mes) { // Verifica se a tarefa é do ano e mês selecionados
-                tarefasFiltradas.put(data, entry.getValue()); // Adiciona a tarefa ao mapa de tarefas filtradas
+        /*
+        1. Cria um TreeMap para armazenar as tarefas filtradas
+        2. Iterar sobre o mapa de tarefas
+        3. Obter a data da tarefa
+        4. Verificar se a tarefa é do ano e mês selecionados
+        5. Adicionar a tarefa ao mapa de tarefas filtradas 
+        */
+        Map<LocalDate, List<String>> tarefasFiltradas = new TreeMap<>();
+        for (Map.Entry<LocalDate, List<String>> entry : tarefasMap.entrySet()) { 
+            LocalDate data = entry.getKey(); 
+            if (data.getYear() == ano && data.getMonthValue() == mes) { 
+                tarefasFiltradas.put(data, entry.getValue()); 
             }
         }
 
@@ -187,16 +192,23 @@ public class Calendario extends JFrame {
         mesLabel.setFont(new Font("Serif", Font.BOLD, 18)); // Define a fonte do rótulo
         tarefasPanel.add(mesLabel); // Adiciona o rótulo ao painel de tarefas
 
-        for (Map.Entry<LocalDate, List<String>> entry : tarefasFiltradas.entrySet()) { // Itera sobre o mapa de tarefas filtradas
-            LocalDate data = entry.getKey(); // Obtém a data da tarefa
-            JLabel dataLabel = new JLabel("Dia " + data.getDayOfMonth() + ":"); // Cria um rótulo com o dia da tarefa
-            dataLabel.setFont(new Font("Serif", Font.BOLD, 14)); // Define a fonte do rótulo
-            tarefasPanel.add(dataLabel); // Adiciona o rótulo ao painel de tarefas
+        /*
+        1. Iterar sobre o mapa de tarefas filtradas -> Obter a data e a lista de tarefas da data
+        2. Criar um rótulo com o dia da tarefa -> Definir a fonte do rótulo -> Adicionar o rótulo ao painel de tarefas
+        */
+        for (Map.Entry<LocalDate, List<String>> entry : tarefasFiltradas.entrySet()) {
+            LocalDate data = entry.getKey();
+            JLabel dataLabel = new JLabel("Dia " + data.getDayOfMonth() + ":");
+            dataLabel.setFont(new Font("Serif", Font.BOLD, 14));
+            tarefasPanel.add(dataLabel);
 
-            for (String tarefa : entry.getValue()) { // Itera sobre as tarefas da data
-                JLabel tarefaLabel = new JLabel("- " + tarefa); // Cria um rótulo com a tarefa
-                tarefaLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Define a margem do rótulo
-                tarefasPanel.add(tarefaLabel); // Adiciona o rótulo ao painel de tarefas
+            /*
+            1. Iterar sobre as tarefas da data -> Criar um rótulo com a tarefa -> Definir a margem do rótulo -> Adicionar o rótulo ao painel de tarefas
+            */
+            for (String tarefa : entry.getValue()) {
+                JLabel tarefaLabel = new JLabel("- " + tarefa); 
+                tarefaLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); 
+                tarefasPanel.add(tarefaLabel); 
             }
         }
 
